@@ -9,6 +9,10 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -82,8 +86,8 @@ public class TopicController {
 	}
 
 	@GetMapping
-	public List<TopicDto> list() {
-		List<Topic> topics = topicRepository.findAll();
+	public List<TopicDto> list(@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
+		Page<Topic> topics = topicRepository.findAll(pageable);
 		return topics.stream().map(TopicDto::new).collect(Collectors.toList());
 	}
 
