@@ -1,7 +1,19 @@
 INSERT INTO
+	PROFILES (NAME)
+VALUES
+	('Admin'),
+	('Guest');
+
+INSERT INTO
 	USERS (MAIL, USERNAME, PASSWORD)
 VALUES
-	('romuloflores@gmail.com', 'romulo', '123456');
+	('foo@example.org', 'foo', '$2a$10$cl.WCmEb3PqliAX1HBpOI.lUxFBKq1FKuRU5Uuw.MZMJWNA3WmdGC'),
+	('bar@example.org', 'bar', '$2a$10$cl.WCmEb3PqliAX1HBpOI.lUxFBKq1FKuRU5Uuw.MZMJWNA3WmdGC');
+
+INSERT INTO
+	USERS_PROFILES (ID_USER, ID_PROFILE)
+VALUES
+	(1, 1), (2, 2);
 
 INSERT INTO
 	COURSES (NAME, CATEGORY)

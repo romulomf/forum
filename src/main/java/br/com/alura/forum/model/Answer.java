@@ -30,17 +30,17 @@ public class Answer {
 	@Column(name = "ID")
 	private Long id;
 
-	@Column(name = "MESSAGE")
+	@Column(name = "MESSAGE", nullable = false)
 	private String menssage;
 
-	@ManyToOne
+	@ManyToOne(targetEntity = Topic.class)
 	@JoinColumn(name = "ID_TOPIC", referencedColumnName = "ID")
 	private Topic topic;
 
 	@Column(name = "CREATED")
 	private LocalDateTime created;
 
-	@ManyToOne
+	@ManyToOne(targetEntity = User.class)
 	@JoinColumn(name = "ID_USER", referencedColumnName = "ID")
 	private User author;
 

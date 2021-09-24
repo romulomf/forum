@@ -9,6 +9,8 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -50,6 +52,7 @@ public class TopicController {
 
 	@DeleteMapping("/{id}")
 	@Transactional
+	@CacheEvict(value = "topicListCache", allEntries = true)
 	public ResponseEntity<Void> drop(@PathVariable("id") Long id) {
 		topicRepository.deleteById(id);
 		return ResponseEntity.ok().build();
@@ -57,6 +60,7 @@ public class TopicController {
 
 	@PutMapping("/{id}")
 	@Transactional
+	@CacheEvict(value = "topicListCache", allEntries = true)
 	public ResponseEntity<TopicDto> edit(@PathVariable("id") Long id, @RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
 		Optional<Topic> entity = topicRepository.findById(id);
 		if (entity.isPresent()) {
@@ -86,6 +90,7 @@ public class TopicController {
 	}
 
 	@GetMapping
+	@Cacheable("topicListCache")
 	public List<TopicDto> list(@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
 		Page<Topic> topics = topicRepository.findAll(pageable);
 		return topics.stream().map(TopicDto::new).collect(Collectors.toList());
@@ -93,6 +98,7 @@ public class TopicController {
 
 	@PostMapping
 	@Transactional
+	@CacheEvict(value = "topicListCache", allEntries = true)
 	public ResponseEntity<TopicDto> save(@RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
 		Optional<Course> course = courseRepository.findById(dto.getCourseId());
 		Optional<User> user = userRepository.findById(dto.getAuthorId());
