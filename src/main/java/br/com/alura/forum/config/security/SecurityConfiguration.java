@@ -12,7 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.com.alura.forum.config.security.filter.AuthenticationTokenFilter;
+import br.com.alura.forum.service.TokenService;
 import lombok.NoArgsConstructor;
 
 @Configuration
@@ -22,6 +25,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private ForumAuthenticationService authenticationService;
+
+	@Autowired
+	private TokenService tokenService;
 
 	@Bean
 	@Override
@@ -52,8 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated()
 			.and().csrf().disable()
 			// Determina que a autenticação vai ser stateless e não deve ser criado uma sessão no servidor.
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//			.and().formLogin();
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.addFilterBefore(new AuthenticationTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

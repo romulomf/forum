@@ -3,23 +3,54 @@ package br.com.alura.forum.service;
 import java.security.KeyPair;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import br.com.alura.forum.model.User;
+import br.com.alura.forum.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import lombok.NoArgsConstructor;
+import io.jsonwebtoken.security.SignatureException;
 
 @Service
-@NoArgsConstructor
 public class TokenService {
+
+	private static final String ISSUER = "API do fórum";
 
 	@Value("${jjwt.expiration}")
 	private Long expiration;
+
+	private final KeyPair key;
+
+	private JwtParser tokenParser;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	public TokenService() {
+		key = Keys.keyPairFor(SignatureAlgorithm.RS256);
+	}
+
+	@PostConstruct
+	public void configure() {
+		tokenParser = Jwts.parserBuilder()
+			.requireIssuer(ISSUER)
+			.setSigningKey(key.getPrivate())
+			.build();
+	}
 
 	public String generate(Authentication authentication) {
 		/*
@@ -37,16 +68,38 @@ public class TokenService {
 
 		Date issued = Date.from(Instant.now());
 		Date active = new Date(issued.getTime() + expiration);
-		
-		KeyPair pair = Keys.keyPairFor(SignatureAlgorithm.RS256);
 
 		return Jwts.builder()
 			// serve para identificar qual é a aplicação que criou esse token
-			.setIssuer("API do fórum")
+			.setIssuer(ISSUER)
 			.setSubject(user.getId().toString())
 			.setIssuedAt(issued)
 			.setExpiration(active)
-			.signWith(pair.getPrivate())
+			.signWith(key.getPrivate())
 			.compact();
+	}
+
+	public boolean isValid(String token) {
+		try {
+			tokenParser.parseClaimsJws(token);
+			return true;
+		}catch (SignatureException | ExpiredJwtException | MalformedJwtException | IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	public Optional<User> getUser(String token) {
+		try {
+			Jws<Claims> jsonWebTokenClaims = tokenParser.parseClaimsJws(token);
+			if (jsonWebTokenClaims != null) {
+				Claims claims = jsonWebTokenClaims.getBody();
+				Long id = Long.valueOf(claims.getSubject());
+				return userRepository.findById(id);
+			}
+			return Optional.empty();
+		}
+		catch (SignatureException | ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
+			return Optional.empty();
+		}
 	}
 }
