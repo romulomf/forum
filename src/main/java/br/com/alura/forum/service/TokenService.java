@@ -83,7 +83,8 @@ public class TokenService {
 		try {
 			tokenParser.parseClaimsJws(token);
 			return true;
-		}catch (SignatureException | ExpiredJwtException | MalformedJwtException | IllegalArgumentException e) {
+		}
+		catch (SignatureException | ExpiredJwtException | MalformedJwtException | IllegalArgumentException e) {
 			return false;
 		}
 	}

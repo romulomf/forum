@@ -15,6 +15,7 @@ import br.com.alura.forum.model.Course;
 import br.com.alura.forum.model.Topic;
 import br.com.alura.forum.model.TopicStatus;
 import br.com.alura.forum.model.User;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -26,6 +27,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@ApiModel("Tópico")
 public class TopicDto {
 
 	@JsonProperty("id")

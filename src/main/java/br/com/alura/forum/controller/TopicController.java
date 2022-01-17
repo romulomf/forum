@@ -34,11 +34,14 @@ import br.com.alura.forum.model.User;
 import br.com.alura.forum.repository.CourseRepository;
 import br.com.alura.forum.repository.TopicRepository;
 import br.com.alura.forum.repository.UserRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.NoArgsConstructor;
 
 @RestController
 @RequestMapping("/topic")
 @NoArgsConstructor
+@Api(tags = "Tópicos")
 public class TopicController {
 
 	@Autowired
@@ -53,6 +56,7 @@ public class TopicController {
 	@DeleteMapping("/{id}")
 	@Transactional
 	@CacheEvict(value = "topicListCache", allEntries = true)
+	@ApiOperation("Remover um tópico")
 	public ResponseEntity<Void> drop(@PathVariable("id") Long id) {
 		topicRepository.deleteById(id);
 		return ResponseEntity.ok().build();
@@ -61,6 +65,7 @@ public class TopicController {
 	@PutMapping("/{id}")
 	@Transactional
 	@CacheEvict(value = "topicListCache", allEntries = true)
+	@ApiOperation("Alterar um tópico")
 	public ResponseEntity<TopicDto> edit(@PathVariable("id") Long id, @RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
 		Optional<Topic> entity = topicRepository.findById(id);
 		if (entity.isPresent()) {
@@ -81,6 +86,7 @@ public class TopicController {
 	}
 
 	@GetMapping("/{id}")
+	@ApiOperation("Buscar um tópico")
 	public ResponseEntity<TopicDto> find(@PathVariable("id") Long id) {
 		Optional<Topic> entity = topicRepository.findById(id);
 		if (entity.isPresent()) {
@@ -91,6 +97,7 @@ public class TopicController {
 
 	@GetMapping
 	@Cacheable("topicListCache")
+	@ApiOperation("Listar todos os tópicos")
 	public List<TopicDto> list(@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
 		Page<Topic> topics = topicRepository.findAll(pageable);
 		return topics.stream().map(TopicDto::new).collect(Collectors.toList());
@@ -99,6 +106,7 @@ public class TopicController {
 	@PostMapping
 	@Transactional
 	@CacheEvict(value = "topicListCache", allEntries = true)
+	@ApiOperation("Adicionar um tópico")
 	public ResponseEntity<TopicDto> save(@RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
 		Optional<Course> course = courseRepository.findById(dto.getCourseId());
 		Optional<User> user = userRepository.findById(dto.getAuthorId());

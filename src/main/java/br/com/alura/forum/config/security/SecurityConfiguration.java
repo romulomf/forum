@@ -51,6 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// Realiza as configurações de autorização
 		http.authorizeRequests()
+			.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
 			.antMatchers(HttpMethod.POST, "/user").permitAll()
 			.antMatchers(HttpMethod.GET, "/topic").permitAll()
 			.antMatchers(HttpMethod.GET, "/topic/*").permitAll()
@@ -66,5 +67,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// realiza as configurações de recursos estáticos (assets)
+		web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**", "/swagger-ui/**");
 	}
 }

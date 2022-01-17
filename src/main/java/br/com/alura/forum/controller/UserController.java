@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.alura.forum.controller.dto.TokenDto;
 import br.com.alura.forum.controller.dto.UserDto;
 import br.com.alura.forum.service.TokenService;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 
 @RestController
 @RequestMapping("/user")
 @NoArgsConstructor
+@Api(tags = "Usuários")
 public class UserController {
 
 	@Autowired

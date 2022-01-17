@@ -1,11 +1,13 @@
 package br.com.alura.forum.controller.dto;
 
 import br.com.alura.forum.model.User;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@ApiModel("Usuário")
 public class UserDto {
 
 	private Long id;
