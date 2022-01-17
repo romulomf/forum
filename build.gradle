@@ -1,7 +1,8 @@
 plugins {
-	id 'org.springframework.boot' version '2.5.4'
+	id 'org.springframework.boot' version '2.6.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'eclipse'
 }
 
 group = 'br.com.alura'
@@ -40,4 +41,24 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+eclipse {
+	project {
+		name = 'forum'
+		comment = 'Curso de SpringBoot: API REST do fórum da Alura'
+	}
+
+	sourceCompatibility = 11
+	targetCompatibility = 11
+
+	jdt {
+		sourceCompatibility = 11
+		targetCompatibility = 11
+	}
+
+	classpath {
+		downloadSources = false
+		downloadJavadoc = true
+	}
 }

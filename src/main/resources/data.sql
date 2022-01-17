@@ -1,12 +1,14 @@
 INSERT INTO
 	PROFILES (NAME)
 VALUES
-	('Admin'),
-	('Guest');
+	-- O padrão do spring security é prefixar o nome do perfil com ROLE_ seguido do nome (tudo escrito em maiúsculo).
+	('ROLE_ADMIN'),
+	('ROLE_GUEST');
 
 INSERT INTO
 	USERS (MAIL, USERNAME, PASSWORD)
 VALUES
+	-- As senhas usadas nos exemplos são as mesmas para todos os usuários: 123456
 	('foo@example.org', 'foo', '$2a$10$cl.WCmEb3PqliAX1HBpOI.lUxFBKq1FKuRU5Uuw.MZMJWNA3WmdGC'),
 	('bar@example.org', 'bar', '$2a$10$cl.WCmEb3PqliAX1HBpOI.lUxFBKq1FKuRU5Uuw.MZMJWNA3WmdGC');
 
