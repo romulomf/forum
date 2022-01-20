@@ -15,7 +15,7 @@ import br.com.alura.forum.model.Course;
 import br.com.alura.forum.model.Topic;
 import br.com.alura.forum.model.TopicStatus;
 import br.com.alura.forum.model.User;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -27,33 +27,40 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-@ApiModel("Tópico")
+@Schema(description = "Representa uma discussão no fórum")
 public class TopicDto {
 
 	@JsonProperty("id")
+	@Schema(description = "identificador único")
 	private Long id;
 
 	@NotEmpty
 	@JsonProperty("title")
+	@Schema(description = "título")
 	private String title;
 
 	@Length(min = 3)
 	@JsonProperty("message")
+	@Schema(description = "texto da mensagem do tópico")
 	private String message;
 
 	@NotNull
 	@JsonProperty("courseId")
+	@Schema(description = "código identificador do curso")
 	private Long courseId;
 
 	@NotNull
 	@JsonProperty("status")
+	@Schema(description = "condição atual do tópico")
 	private String status;
 
 	@NotNull
 	@JsonProperty("authorId")
+	@Schema(description = "código identificador do usuário")
 	private Long authorId;
 
 	@JsonProperty("created")
+	@Schema(description = "data/hora de registro da criação")
 	private LocalDateTime created;
 
 	private TopicDto() {
@@ -103,10 +110,10 @@ public class TopicDto {
 		this(entity.getTitle(), entity.getMessage(), entity.getCreated());
 		Optional<Course> course = Optional.of(entity.getCourse());
 		Optional<User> author = Optional.of(entity.getAuthor());
-		this.courseId = course.map(Course::getId).orElse(null);
-		this.authorId = author.map(User::getId).orElse(null);
+		this.courseId = course.map(Course::getId).orElse(0L);
+		this.authorId = author.map(User::getId).orElse(0L);
 		OptionalLong.of(entity.getId()).ifPresent(n -> this.id = n);
-		this.status = Optional.ofNullable(entity.getStatus()).map(TopicStatus::name).orElse(null);
+		this.status = Optional.ofNullable(entity.getStatus()).map(TopicStatus::name).orElse(TopicStatus.UNANSWERED.name());
 	}
 
 	public Topic toEntity(Course course, User author) {

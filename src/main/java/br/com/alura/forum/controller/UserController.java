@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.alura.forum.controller.dto.TokenDto;
 import br.com.alura.forum.controller.dto.UserDto;
 import br.com.alura.forum.service.TokenService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 
 @RestController
 @RequestMapping("/user")
-@Profile("prd")
+@Profile(value = {"prd", "test"})
 @NoArgsConstructor
-@Api(tags = "Usuários")
+@Schema(name = "Usuários")
 public class UserController {
 
 	@Autowired
@@ -34,6 +35,7 @@ public class UserController {
 	private TokenService tokenService;
 
 	@PostMapping
+	@Operation(summary = "Autenticar", description = "Autenticar um usuário")
 	public ResponseEntity<TokenDto> auth(@RequestBody @Valid UserDto dto) {
 		Authentication auth = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
 		try {

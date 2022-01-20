@@ -34,14 +34,15 @@ import br.com.alura.forum.model.User;
 import br.com.alura.forum.repository.CourseRepository;
 import br.com.alura.forum.repository.TopicRepository;
 import br.com.alura.forum.repository.UserRepository;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 
 @RestController
 @RequestMapping("/topic")
 @NoArgsConstructor
-@Api(tags = "Tópicos")
+@Schema(name = "Tópicos")
 public class TopicController {
 
 	@Autowired
@@ -56,8 +57,8 @@ public class TopicController {
 	@DeleteMapping("/{id}")
 	@Transactional
 	@CacheEvict(value = "topicListCache", allEntries = true)
-	@ApiOperation("Remover um tópico")
-	public ResponseEntity<Void> drop(@PathVariable("id") Long id) {
+	@Operation(summary = "Remover", description = "Remover um tópico")
+	public ResponseEntity<Void> drop(@Parameter(name = "id", description = "identificador único") @PathVariable("id") Long id) {
 		topicRepository.deleteById(id);
 		return ResponseEntity.ok().build();
 	}
@@ -65,8 +66,8 @@ public class TopicController {
 	@PutMapping("/{id}")
 	@Transactional
 	@CacheEvict(value = "topicListCache", allEntries = true)
-	@ApiOperation("Alterar um tópico")
-	public ResponseEntity<TopicDto> edit(@PathVariable("id") Long id, @RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
+	@Operation(summary = "Alterar", description = "Alterar um tópico")
+	public ResponseEntity<TopicDto> edit(@Parameter(name = "id", description = "identificador único") @PathVariable("id") Long id, @RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
 		Optional<Topic> entity = topicRepository.findById(id);
 		if (entity.isPresent()) {
 			Topic topic = entity.get();
@@ -86,8 +87,8 @@ public class TopicController {
 	}
 
 	@GetMapping("/{id}")
-	@ApiOperation("Buscar um tópico")
-	public ResponseEntity<TopicDto> find(@PathVariable("id") Long id) {
+	@Operation(summary = "Buscar", description = "Buscar um tópico")
+	public ResponseEntity<TopicDto> find(@Parameter(name = "id", description = "identificador único") @PathVariable("id") Long id) {
 		Optional<Topic> entity = topicRepository.findById(id);
 		if (entity.isPresent()) {
 			return ResponseEntity.ok(new TopicDto(entity.get()));
@@ -97,8 +98,8 @@ public class TopicController {
 
 	@GetMapping
 	@Cacheable("topicListCache")
-	@ApiOperation("Listar todos os tópicos")
-	public List<TopicDto> list(@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
+	@Operation(summary = "Listar", description = "Listar todos os tópicos")
+	public List<TopicDto> list(@Parameter(hidden = true) @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
 		Page<Topic> topics = topicRepository.findAll(pageable);
 		return topics.stream().map(TopicDto::new).collect(Collectors.toList());
 	}
@@ -106,8 +107,8 @@ public class TopicController {
 	@PostMapping
 	@Transactional
 	@CacheEvict(value = "topicListCache", allEntries = true)
-	@ApiOperation("Adicionar um tópico")
-	public ResponseEntity<TopicDto> save(@RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
+	@Operation(summary = "Adicionar", description = "Adicionar um tópico")
+	public ResponseEntity<TopicDto> save(@Parameter(name = "dto", description = "Token JWT") @RequestBody @Valid TopicDto dto, UriComponentsBuilder uriBuilder) {
 		Optional<Course> course = courseRepository.findById(dto.getCourseId());
 		Optional<User> user = userRepository.findById(dto.getAuthorId());
 		if (!course.isPresent() || !user.isPresent()) {

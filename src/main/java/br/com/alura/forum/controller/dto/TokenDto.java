@@ -1,10 +1,10 @@
 package br.com.alura.forum.controller.dto;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-@ApiModel("Token")
+@Schema(name = "Token", description = "Token JWT de autenticação")
 public class TokenDto {
 
 	private String type;

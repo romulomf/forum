@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@Profile("prd")
+@Profile(value = {"prd", "test"})
 @NoArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -70,6 +70,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// realiza as configurações de recursos estáticos (assets)
-		web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**", "/swagger-ui/**");
+		web.ignoring().antMatchers("/**.html", "/v3/api-docs/**", "/webjars/**", "/configuration/**", "/swagger-resources/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**");
 	}
 }
