@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 @SpringBootApplication
 @EnableSpringDataWebSupport
 @EnableCaching
-@OpenAPIDefinition(info = @Info(title = "Fórum", version = "0.1.0", description = "API do Fórum da Alura"))
+@OpenAPIDefinition(info = @Info(title = "Fórum", version = "0.1.2", description = "API do Fórum da Alura"))
 public class ForumApplication {
 
 	public static void main(String[] args) {
