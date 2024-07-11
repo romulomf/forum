@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.OptionalLong;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,6 +13,8 @@ import br.com.alura.forum.model.Topic;
 import br.com.alura.forum.model.TopicStatus;
 import br.com.alura.forum.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

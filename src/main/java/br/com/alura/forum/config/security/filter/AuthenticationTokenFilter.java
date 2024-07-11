@@ -3,11 +3,6 @@ package br.com.alura.forum.config.security.filter;
 import java.io.IOException;
 import java.util.Optional;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +12,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.alura.forum.model.User;
 import br.com.alura.forum.service.TokenService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
@@ -24,6 +23,14 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
 	public AuthenticationTokenFilter(TokenService tokenService) {
 		this.tokenService = tokenService;
+	}
+
+	private Optional<String> retrieveToken(HttpServletRequest request) {
+		String token = request.getHeader(HttpHeaders.AUTHORIZATION); 
+		if (StringUtils.startsWith(token, "Bearer ")) {
+			return Optional.of(StringUtils.substring(token, 7));
+		}
+		return Optional.empty();
 	}
 
 	@Override
@@ -37,13 +44,5 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 			});
 		}
 		filterChain.doFilter(request, response);
-	}
-
-	private Optional<String> retrieveToken(HttpServletRequest request) {
-		String token = request.getHeader(HttpHeaders.AUTHORIZATION); 
-		if (StringUtils.startsWith(token, "Bearer ")) {
-			return Optional.of(StringUtils.substring(token, 7));
-		}
-		return Optional.empty();
 	}
 }

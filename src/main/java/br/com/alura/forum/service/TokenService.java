@@ -5,8 +5,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -24,6 +22,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class TokenService {
@@ -37,10 +36,10 @@ public class TokenService {
 
 	private JwtParser tokenParser;
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
-	public TokenService() {
+	public TokenService(@Autowired UserRepository userRepository) {
+		this.userRepository = userRepository;
 		key = Keys.keyPairFor(SignatureAlgorithm.RS256);
 	}
 

@@ -3,10 +3,6 @@ package br.com.alura.forum.controller;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -37,22 +33,25 @@ import br.com.alura.forum.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.NoArgsConstructor;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/topic")
-@NoArgsConstructor
 @Schema(name = "Tópicos")
 public class TopicController {
 
-	@Autowired
-	private CourseRepository courseRepository;
+	private final CourseRepository courseRepository;
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
-	@Autowired
-	private TopicRepository topicRepository;
+	private final TopicRepository topicRepository;
+
+	public TopicController(@Autowired CourseRepository courseRepository, @Autowired UserRepository userRepository, @Autowired TopicRepository topicRepository) {
+		this.courseRepository = courseRepository;
+		this.userRepository = userRepository;
+		this.topicRepository = topicRepository;
+	}
 
 	@DeleteMapping("/{id}")
 	@Transactional
@@ -101,7 +100,7 @@ public class TopicController {
 	@Operation(summary = "Listar", description = "Listar todos os tópicos")
 	public List<TopicDto> list(@Parameter(hidden = true) @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
 		Page<Topic> topics = topicRepository.findAll(pageable);
-		return topics.stream().map(TopicDto::new).collect(Collectors.toList());
+		return topics.stream().map(TopicDto::new).toList();
 	}
 
 	@PostMapping

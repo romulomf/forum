@@ -1,7 +1,5 @@
 package br.com.alura.forum.controller;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +17,22 @@ import br.com.alura.forum.controller.dto.UserDto;
 import br.com.alura.forum.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.NoArgsConstructor;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/user")
 @Profile(value = {"prd", "test"})
-@NoArgsConstructor
 @Schema(name = "Usuários")
 public class UserController {
 
-	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	@Autowired
 	private TokenService tokenService;
+
+	public UserController(@Autowired AuthenticationManager authenticationManager, @Autowired TokenService tokenService) {
+		this.authenticationManager = authenticationManager;
+		this.tokenService = tokenService;
+	}
 
 	@PostMapping
 	@Operation(summary = "Autenticar", description = "Autenticar um usuário")
