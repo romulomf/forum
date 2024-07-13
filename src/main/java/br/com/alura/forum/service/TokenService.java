@@ -18,9 +18,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 
@@ -40,15 +38,12 @@ public class TokenService {
 
 	public TokenService(@Autowired UserRepository userRepository) {
 		this.userRepository = userRepository;
-		key = Keys.keyPairFor(SignatureAlgorithm.RS256);
+		key = Jwts.SIG.RS256.keyPair().build();
 	}
 
 	@PostConstruct
 	public void configure() {
-		tokenParser = Jwts.parserBuilder()
-			.requireIssuer(ISSUER)
-			.setSigningKey(key.getPrivate())
-			.build();
+		tokenParser = Jwts.parser().requireIssuer(ISSUER).verifyWith(key.getPublic()).build();
 	}
 
 	public String generate(Authentication authentication) {
@@ -70,17 +65,17 @@ public class TokenService {
 
 		return Jwts.builder()
 			// serve para identificar qual é a aplicação que criou esse token
-			.setIssuer(ISSUER)
-			.setSubject(user.getId().toString())
-			.setIssuedAt(issued)
-			.setExpiration(active)
+			.issuer(ISSUER)
+			.issuedAt(issued)
+			.subject(user.getId().toString())
+			.expiration(active)
 			.signWith(key.getPrivate())
 			.compact();
 	}
 
 	public boolean isValid(String token) {
 		try {
-			tokenParser.parseClaimsJws(token);
+			tokenParser.parseSignedClaims(token);
 			return true;
 		}
 		catch (SignatureException | ExpiredJwtException | MalformedJwtException | IllegalArgumentException e) {
@@ -90,9 +85,9 @@ public class TokenService {
 
 	public Optional<User> getUser(String token) {
 		try {
-			Jws<Claims> jsonWebTokenClaims = tokenParser.parseClaimsJws(token);
+			Jws<Claims> jsonWebTokenClaims = tokenParser.parseSignedClaims(token);
 			if (jsonWebTokenClaims != null) {
-				Claims claims = jsonWebTokenClaims.getBody();
+				Claims claims = jsonWebTokenClaims.getPayload();
 				Long id = Long.valueOf(claims.getSubject());
 				return userRepository.findById(id);
 			}
